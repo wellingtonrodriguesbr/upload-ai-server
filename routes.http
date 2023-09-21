@@ -10,15 +10,26 @@ Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0g
 Content-Disposition: form-data; name="file"; filename="example.mp3"
 Content-Type: audio/mpeg
 
-< https://www.youtube.com/watch?v=PWj-70ZsWVc
+< ./example.mp3
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ###
 
 # @name create-transcription
-POST http://localhost:3333/videos/5fed26f3-dafa-48db-a862-6010b2910f7b/transcription
-Content-Type:  application/json
+POST http://localhost:3333/videos/4732e80a-0892-417e-a81d-8241be6e369b/transcription
+Content-Type: application/json
 
 {
   "prompt": "programa rocketseat one"
+}
+
+###
+
+# @name generate-IA-completion
+POST  http://localhost:3333/ai/generate
+Content-Type: application/json
+
+{
+  "videoId": "4732e80a-0892-417e-a81d-8241be6e369b",
+  "template": "Gere um resumo da transcrição do vídeo informada a seguir: '''{transcription}'''"
 }
