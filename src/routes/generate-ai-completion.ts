@@ -47,7 +47,7 @@ export async function generateAiCompletionRoute(app: FastifyInstance) {
     streamToResponse(stream, reply.raw, {
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST",
+        "Access-Control-Allow-Methods": "POST, GET, PUT, OPTIONS, DELETE",
       },
     });
   });

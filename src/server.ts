@@ -10,6 +10,7 @@ const app = fastify();
 
 app.register(fastifyCors, {
   origin: "*",
+  credentials: true,
 });
 
 app.register(getAllPromptsRoute);
