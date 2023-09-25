@@ -8,6 +8,14 @@
     "start": "node build/server.js",
     "dev": "tsx watch src/server.ts"
   },
+  "build": {
+    "extraResources": [
+      {
+        "from": "node_modules/.prisma/client/",
+        "to": "build/node_modules/.prisma/client/"
+      }
+    ]
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
