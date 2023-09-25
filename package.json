@@ -12,7 +12,7 @@
     "extraResources": [
       {
         "from": "node_modules/.prisma/client/",
-        "to": "build/node_modules/.prisma/client/"
+        "to": "app/node_modules/.prisma/client/"
       }
     ]
   },
