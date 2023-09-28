@@ -34,10 +34,9 @@ export async function uploadVideoRoute(app: FastifyInstance) {
     const fileBaseName = path.basename(data.filename, extension);
     const fileUploadName = `${fileBaseName}-${randomUUID()}${extension}`;
 
-    const uploadDestination = path.resolve(
+    const uploadDestination = path.join(
       __dirname,
-      "../../tmp",
-      fileUploadName
+      `../../tmp/${fileUploadName}`
     );
 
     await pump(data.file, fs.createWriteStream(uploadDestination));
