@@ -29,6 +29,7 @@
     "@prisma/client": "5.3.1",
     "ai": "^2.2.13",
     "fastify": "^4.23.2",
+    "fastify-multer": "^2.0.3",
     "openai": "^4.8.0",
     "zod": "^3.22.2"
   }

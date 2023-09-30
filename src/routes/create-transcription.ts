@@ -1,11 +1,13 @@
 import { FastifyInstance } from "fastify";
-import { createReadStream } from "node:fs";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { openai } from "../lib/openai";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { s3 } from "../lib/s3";
+import { toFile } from "openai";
 
 export async function createTranscriptionRoute(app: FastifyInstance) {
-  app.post("/videos/:videoId/transcription", async (req) => {
+  app.post("/videos/:videoId/transcription", async (req, reply) => {
     const paramsSchema = z.object({
       videoId: z.string().uuid(),
     });
@@ -25,10 +27,26 @@ export async function createTranscriptionRoute(app: FastifyInstance) {
     });
 
     const videoPath = video.path;
-    const audioReadStream = createReadStream(videoPath);
+    const command = new GetObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: videoPath,
+    });
+
+    const file = await s3.send(command);
+
+    if (!file) {
+      return reply.status(400).send({ error: "File not found." });
+    }
+
+    if (!file.Body) {
+      return reply.status(400).send({ error: "File body is missing." });
+    }
+
+    const fileByteArray = await file.Body.transformToByteArray();
+    const fileFull = await toFile(fileByteArray, "audio.mp3");
 
     const response = await openai.audio.transcriptions.create({
-      file: audioReadStream,
+      file: fileFull,
       model: "whisper-1",
       language: "pt",
       response_format: "json",
