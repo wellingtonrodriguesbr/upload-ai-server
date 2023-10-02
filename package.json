@@ -24,12 +24,12 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.421.0",
+    "@aws-sdk/lib-storage": "^3.423.0",
     "@fastify/cors": "^8.4.0",
     "@fastify/multipart": "^7.7.3",
     "@prisma/client": "5.3.1",
     "ai": "^2.2.13",
     "fastify": "^4.23.2",
-    "fastify-multer": "^2.0.3",
     "openai": "^4.8.0",
     "zod": "^3.22.2"
   }
