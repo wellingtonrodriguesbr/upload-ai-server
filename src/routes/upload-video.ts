@@ -1,61 +1,59 @@
 import path from "node:path";
 import { randomUUID } from "node:crypto";
-import { FastifyInstance, FastifyRequest } from "fastify";
+import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
 import { s3 } from "../lib/s3";
-import { upload } from "../lib/multer";
-
-type FileFastifyRequest = FastifyRequest & {
-  file?: {
-    buffer: Buffer;
-    encoding: string;
-    fieldname: string;
-    mimetype: string;
-    originalname: string;
-    size: number;
-  };
-};
+import fastifyMultipart from "@fastify/multipart";
 
 export async function uploadVideoRoute(app: FastifyInstance) {
-  app.post(
-    "/videos",
-    { preHandler: upload.single("file") },
-    async (req: FileFastifyRequest, reply) => {
-      const data = req.file;
+  app.register(fastifyMultipart, {
+    limits: {
+      fileSize: 1_048_576 * 25, // 25mb
+    },
+  });
 
-      if (!data) {
-        return reply.status(400).send({ error: "Missing file input." });
-      }
+  app.post("/videos", async (req, reply) => {
+    const data = await req.file();
 
-      const extension = path.extname(data.originalname);
+    if (!data) {
+      return reply.status(400).send({ error: "Missing file input." });
+    }
 
-      if (extension !== ".mp3") {
-        return reply
-          .status(400)
-          .send({ error: "Invalid input type, please upload a MP3" });
-      }
+    const extension = path.extname(data.filename);
 
-      const fileBaseName = path.basename(data.originalname, extension);
-      const fileUploadName = `${fileBaseName}-${randomUUID()}${extension}`;
+    if (extension !== ".mp3") {
+      return reply
+        .status(400)
+        .send({ error: "Invalid input type, please upload a MP3" });
+    }
 
-      await s3.send(
-        new PutObjectCommand({
+    const fileBaseName = path.basename(data.filename, extension);
+    const fileUploadName = `${fileBaseName}-${randomUUID()}${extension}`;
+
+    try {
+      const upload = new Upload({
+        client: s3,
+        params: {
           Bucket: process.env.BUCKET_NAME,
           Key: fileUploadName,
           ContentType: data.mimetype,
-          Body: data.buffer,
-        })
-      );
-
-      const video = await prisma.video.create({
-        data: {
-          name: data.originalname,
-          path: fileUploadName,
+          Body: data.file,
         },
       });
 
-      return { video };
+      await upload.done();
+    } catch (error) {
+      console.log(error);
     }
-  );
+
+    const video = await prisma.video.create({
+      data: {
+        name: data.filename,
+        path: fileUploadName,
+      },
+    });
+
+    return { video };
+  });
 }

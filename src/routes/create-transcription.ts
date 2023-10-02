@@ -1,10 +1,11 @@
-import { FastifyInstance } from "fastify";
 import { z } from "zod";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { toFile } from "openai/uploads";
+
+import type { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { openai } from "../lib/openai";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "../lib/s3";
-import { toFile } from "openai";
 
 export async function createTranscriptionRoute(app: FastifyInstance) {
   app.post("/videos/:videoId/transcription", async (req, reply) => {
@@ -27,8 +28,9 @@ export async function createTranscriptionRoute(app: FastifyInstance) {
     });
 
     const videoPath = video.path;
+
     const command = new GetObjectCommand({
-      Bucket: process.env.AWS_BUCKET_NAME,
+      Bucket: process.env.BUCKET_NAME,
       Key: videoPath,
     });
 

@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 
@@ -5,11 +7,8 @@ import { getAllPromptsRoute } from "./routes/get-all-prompts";
 import { uploadVideoRoute } from "./routes/upload-video";
 import { createTranscriptionRoute } from "./routes/create-transcription";
 import { generateAiCompletionRoute } from "./routes/generate-ai-completion";
-import multer from "fastify-multer";
 
 const app = fastify();
-
-app.register(multer.contentParser);
 
 app.register(fastifyCors, {
   origin: "*",
