@@ -2,11 +2,10 @@ import "dotenv/config";
 
 import fastify from "fastify";
 import fastifyCors from "@fastify/cors";
-
-import { getAllPromptsRoute } from "./routes/get-all-prompts";
-import { uploadVideoRoute } from "./routes/upload-video";
+import fastifyMultipart from "@fastify/multipart";
 import { createTranscriptionRoute } from "./routes/create-transcription";
 import { generateAiCompletionRoute } from "./routes/generate-ai-completion";
+import { appRoutes } from "./http/controllers/routes";
 
 const app = fastify();
 
@@ -17,8 +16,13 @@ app.register(fastifyCors, {
   methods: ["GET", "OPTIONS", "PATCH", "DELETE", "POST", "PUT"],
 });
 
-app.register(getAllPromptsRoute);
-app.register(uploadVideoRoute);
+app.register(fastifyMultipart, {
+  limits: {
+    fileSize: 1_048_576 * 25, // 25mb
+  },
+});
+
+app.register(appRoutes);
 app.register(createTranscriptionRoute);
 app.register(generateAiCompletionRoute);
 
