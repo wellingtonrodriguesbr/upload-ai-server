@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { UploadVideoController } from "./upload-video";
+// import { UploadVideoController } from "./upload-video";
 import { getAllPromptsController } from "./get-all-prompts";
 
 export async function appRoutes(app: FastifyInstance) {
