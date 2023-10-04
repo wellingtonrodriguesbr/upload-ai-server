@@ -10,6 +10,13 @@ import { appRoutes } from "./http/controllers/routes";
 
 const app = fastify();
 
+app.register(fastifyMultipart, {
+  limits: {
+    fileSize: 1_048_576 * 25, // 25mb
+    files: 1,
+  },
+});
+
 app.register(fastifyCors, {
   origin: "*",
   credentials: true,
@@ -17,14 +24,8 @@ app.register(fastifyCors, {
   methods: ["GET", "OPTIONS", "PATCH", "DELETE", "POST", "PUT"],
 });
 
-app.register(fastifyMultipart, {
-  limits: {
-    fileSize: 1_048_576 * 25, // 25mb
-  },
-});
-
 app.register(appRoutes);
-app.register(uploadVideoRoute);
+// app.register(uploadVideoRoute);
 app.register(createTranscriptionRoute);
 app.register(generateAiCompletionRoute);
 

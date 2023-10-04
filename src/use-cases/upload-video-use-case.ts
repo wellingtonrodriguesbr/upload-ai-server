@@ -6,14 +6,10 @@ import { MissingFile } from "../use-cases/errors/missing-file";
 import { InvalidInputType } from "./errors/invalid-input-type";
 import { Upload } from "@aws-sdk/lib-storage";
 import { s3 } from "../lib/s3";
+import { MultipartFile } from "@fastify/multipart";
 
 interface UploadVideoUseCaseRequest {
-  data: {
-    filename: string;
-    path: string;
-    mimetype: string;
-    file: File;
-  };
+  data: MultipartFile;
 }
 
 interface UploadVideoUseCaseResponse {
@@ -29,8 +25,6 @@ export class UploadVideoUseCase {
     if (!data) {
       throw new MissingFile();
     }
-
-    console.log(data);
 
     const extension = path.extname(data.filename);
 
