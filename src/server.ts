@@ -26,7 +26,7 @@ app.register(fastifyCors, {
 
 app.register(appRoutes);
 // app.register(uploadVideoRoute);
-app.register(createTranscriptionRoute);
+// app.register(createTranscriptionRoute);
 app.register(generateAiCompletionRoute);
 
 app
