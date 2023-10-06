@@ -3,9 +3,6 @@ import "dotenv/config";
 import fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
-import { createTranscriptionRoute } from "./routes/create-transcription";
-import { generateAiCompletionRoute } from "./routes/generate-ai-completion";
-import { uploadVideoRoute } from "./routes/upload-video";
 import { appRoutes } from "./http/controllers/routes";
 
 const app = fastify();
@@ -25,9 +22,6 @@ app.register(fastifyCors, {
 });
 
 app.register(appRoutes);
-// app.register(uploadVideoRoute);
-// app.register(createTranscriptionRoute);
-app.register(generateAiCompletionRoute);
 
 app
   .listen({
